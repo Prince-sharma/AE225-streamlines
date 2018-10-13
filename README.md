@@ -1,1 +1,2 @@
-##This repo contains code for all the flow simulation for AE225 course
+## This repo contains code for all the _flow simulation_ for AE225 course
+
