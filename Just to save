@@ -1,0 +1,49 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
+
+U=10.0 #m/s freestream velocity
+m=0.5 #source and sink strength
+k=10.0 #vortex strength
+lambd=1.0 #lambd=lambda=2ma
+n=1000
+x_axis=np.linspace(0,10,n)
+
+soln_psi1=np.zeros((n,2))
+soln_psi2=np.zeros((n,2))
+soln_phi1=np.zeros((n,2))
+soln_phi2=np.zeros((n,2))
+num=15
+psi=np.linspace(-10,15,num)
+phi=np.linspace(0.1,10,num)
+for j in range(num):
+    for i in range(n):
+        def psiFunc(z):
+            x=z[0]
+            y=z[1]
+            F=np.zeros((2))
+            #F[0]=x*x + y*y - psi[j]
+            F[0] = U*y - lambd*y/(x*x + y*y) - 0.5*k*np.log(x*x + y*y) - psi[j]
+            F[1]=x - x_axis[i]
+            return F
+#        if 
+        zGuess=np.array([0.0,1.0])
+        z=fsolve(psiFunc,zGuess)
+        soln_psi1[i,0]=z[0]
+        soln_psi1[i,1]=z[1]
+#        def phiFunc(z):
+#            a=z[0]
+#            b=z[1]
+#            F1=np.zeros((2))
+#            F1[0]=a-np.sin(a)-b #func for velocity potential 
+#            F1[1]=a-x_axis[i]
+#            return F1
+#        zGuess1=np.array([0.0,0.0])
+#        z1=fsolve(phiFunc,zGuess1)
+#        soln_phi[i,0]=z1[0]
+#        soln_phi[i,1]=z1[1]
+    plt.plot(x_axis,soln_psi1[:,1],'-', c='black', markersize=0.1, linewidth=0.5)
+    plt.plot(-x_axis,soln_psi1[:,1],'-', c='black', markersize=0.1, linewidth=0.5)
+#    plt.plot(soln_phi[:,0],soln_phi[:,1],'.', c='red', markersize=0.05)
+
+
