@@ -1,0 +1,99 @@
+import numpy as np
+from scipy.optimize import fsolve
+import matplotlib.pyplot as plt
+
+n=1000
+th=np.zeros(n)
+U=10.0                                       #U=10.0
+lambd=1.0                                    #lambd=1.0   
+k=50/3                                       #k=50/3
+
+soln_psi1=np.zeros((n-1,2))
+
+a=np.sqrt(lambd/U) #radius of cylinder
+print(a)
+r=np.linspace(a,20,n)
+x_axis=np.linspace(-20,20,100)
+r=r[1:]
+psi0=np.linspace(-2,7,9)
+psi1=np.array([9,10])
+psi=np.append(psi0,psi1)
+num=len(psi)
+outputArray=np.zeros((n-1,2))
+
+
+
+for j in range(num):
+    
+    outputx0 = []
+    outputy0 = []
+    outputx1 = []
+    outputy1 = []
+    for i in range(len(r)):
+        def psiFunc(z):
+            x=z[0]    #r
+            y=z[1]    #theta
+            F=np.zeros((2))
+            
+            F[0] = U*x*np.sin(y) - lambd*np.sin(y)/x - k*np.log(x) -psi[j] #- psi[j]    psi=7.845 stagnation
+            F[1] = x - r[i]
+            return F
+        zGuess=np.array([2.5,np.pi/4 ])
+        z=fsolve(psiFunc,zGuess)
+        soln_psi1[i,0]=z[0]       #this is r
+        soln_psi1[i,1]=z[1]       #this is theta
+        zGuess[0]=soln_psi1[i,0]  #refine zGuess
+        zGuess[1]=soln_psi1[i,1]  #refine zGuess
+        outputArray[i,0]=soln_psi1[i,0]*np.cos(soln_psi1[i,1])
+        outputArray[i,1]=soln_psi1[i,0]*np.sin(soln_psi1[i,1])
+        
+        if psi[j]==8:
+            if (outputArray[i,1]) <1.35:
+                outputx0.append(outputArray[i,0])
+                outputy0.append(outputArray[i,1])
+                plt.plot(outputx0,outputy0, 'k', linewidth = 0.05)
+                plt.plot(-np.array(outputx0),outputy0, 'k', linewidth=0.05)
+            elif outputArray[i,1] >1.7:
+                outputx1.append(outputArray[i,0])
+                outputy1.append(outputArray[i,1])
+                plt.plot(outputx1,outputy1, 'k', linewidth=0.05)
+                plt.plot(-np.array(outputx1),outputy1, 'k', linewidth=0.05)
+            else:
+                outputx0.append(outputArray[i,0])
+                outputy0.append(outputArray[i,1])
+                plt.plot(outputx0,outputy0, 'k', linewidth = 0.05)
+                plt.plot(-np.array(outputx0),outputy0, 'k', linewidth=0.05)
+
+        elif psi[j]==9:
+            if (outputArray[i,1]) <1.05:
+                outputx0.append(outputArray[i,0])
+                outputy0.append(outputArray[i,1])
+                plt.plot(outputx0,outputy0, 'k', linewidth = 0.05)
+                plt.plot(-np.array(outputx0),outputy0, 'k', linewidth=0.05)
+            elif outputArray[i,1] >2.4:
+                outputx1.append(outputArray[i,0])
+                outputy1.append(outputArray[i,1])
+                plt.plot(outputx1,outputy1, 'k', linewidth=0.05)
+                plt.plot(-np.array(outputx1),outputy1, 'k', linewidth=0.05)
+            else:
+                outputx0.append(outputArray[i,0])
+                outputy0.append(outputArray[i,1])
+                plt.plot(outputx0,outputy0, 'k', linewidth = 0.05)
+                plt.plot(-np.array(outputx0),outputy0, 'k', linewidth=0.05)
+
+                
+        else:
+            outputx0.append(outputArray[i,0])
+            outputy0.append(outputArray[i,1])
+            plt.plot(outputx0,outputy0, 'k', linewidth = 0.05)
+            plt.plot(-np.array(outputx0),outputy0, 'k', linewidth=0.05)
+
+
+plt.xlim(-5,5)
+plt.ylim(-1,5)
+plt.gca().set_aspect('equal')
+radius=a
+theta=np.linspace(0,2*np.pi,100)
+plt.plot(radius*np.cos(theta), radius*np.sin(theta), 'r')
+print(len(outputx1))
+print(len(outputy1))
